@@ -1,0 +1,14 @@
+.profile__title {
+    display: flex;
+    margin: 0 0 16px 0;
+
+  }
+
+  @media screen and (max-width: 574px) {
+    .profile__title {
+      justify-content: space-between;
+      font-size: 14px;
+      line-height: 17px;
+      margin: 0 0 0 14px;
+    }
+  }
