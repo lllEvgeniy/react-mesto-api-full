@@ -29,22 +29,15 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [state, setState] = useState('');
   const [register, setRegister] = useState(false);
+  const [token, setToken] = useState('')
 
   useEffect(() => {
-    tokenCheck();
-    Promise.all([api.getInfo("cards", ""), api.getInfo("users", "/me")])
-      .then(([dataCards, dataUser]) => {
-        setСards(dataCards);
-        setСurrentUser(dataUser.data);
-      })
-      .catch((errorMessage) => {
-        console.log(errorMessage);
-      });
-  }, [loggedIn]);
-
-  useEffect(() => {
-    tokenCheck();
+    getData();
   }, []);
+
+  function handleGetToken(token) {
+    setToken(token)
+  }
 
   function handLeloggedIn() {
     setLoggedIn(true);
@@ -68,7 +61,7 @@ function App() {
 
   function handleUpdateUser(data) {
     api
-      .editProfile(data.name, data.about)
+      .editProfile(data.name, data.about, token)
       .then((data) => {
         setСurrentUser(data.data);
         closeAllPopups();
@@ -80,7 +73,7 @@ function App() {
 
   function handleUpdateAvatar(data) {
     api
-      .editAvatar(data)
+      .editAvatar(data, token)
       .then((data) => {
         setСurrentUser(data.data);
         closeAllPopups();
@@ -92,7 +85,7 @@ function App() {
 
   function handleUpdateCard(card) {
     api
-      .createCard(card.title, card.link)
+      .createCard(card.title, card.link, token)
       .then((newCard) => {
         setСards([newCard, ...cards]);
         closeAllPopups();
@@ -113,7 +106,7 @@ function App() {
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i === currentUser._id);
-    api.changeLike(card._id, !isLiked).then((newCard) => {
+    api.changeLike(card._id, !isLiked, token).then((newCard) => {
       setСards((dataCards) => dataCards.map((c) => (c._id === card._id ? newCard.data : c)));
     })
       .catch((err) => {
@@ -122,7 +115,7 @@ function App() {
   }
 
   function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
+    api.deleteCard(card._id, token).then(() => {
       setСards((dataCards) =>
         dataCards.filter(function (el) {
           return el._id !== card._id;
@@ -132,24 +125,6 @@ function App() {
       .catch((errorMessage) => {
         console.log(errorMessage);
       })
-  }
-
-  function tokenCheck() {
-    if (localStorage.getItem('jwt')) {
-      const jwt = localStorage.getItem('jwt');
-      getContent(jwt).then((res) => {
-        if (res) {
-          const userData = {
-            email: res.data.email
-          }
-          setState(userData)
-          handLeloggedIn()
-          navigate("/")
-
-        }
-      })
-        .catch((err) => console.log(err));
-    }
   }
 
   function handleSubmitSignup({ email, password }) {
@@ -171,11 +146,9 @@ function App() {
   function handleSubmitSignin({ email, password }) {
     auth(password, email, '/signin')
       .then((response) => {
-        setRegister(false)
         localStorage.setItem('jwt', response.token);
         if (response.token) {
-          handLeloggedIn()
-          navigate("/")
+          getData()
         } else {
           setIsRegisterPopupOpen(true)
           console.log('Что-то пошло не так!');
@@ -183,9 +156,31 @@ function App() {
 
       })
       .catch((err) => console.log(err));
-
   }
-  //
+
+  function getData() {
+    const token = localStorage.getItem('jwt')
+    handleGetToken(token)
+    Promise.all([api.getInfo("cards", "", token), api.getInfo("users", "/me", token)])
+      .then(([dataCards, dataUser]) => {
+        setСards(dataCards);
+        setСurrentUser(dataUser.data);
+      })
+    getContent(token).then((res) => {
+      if (res) {
+        const userData = {
+          email: res.data.email
+        }
+        setState(userData)
+        handLeloggedIn()
+        navigate("/")
+      }
+    })
+      .catch((errorMessage) => {
+        console.log(errorMessage);
+      });
+  }
+
   return (
     <div className="App">
 
