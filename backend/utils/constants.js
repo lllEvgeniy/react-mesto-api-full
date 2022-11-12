@@ -1,6 +1,7 @@
 const NOT_FOUND = 404;
 const BAD_REQUEST = 400;
 const SERVER_ERROR = 500;
+const AUTHORIZATION_ERROR = 401;
 const ERROR_MESSAGE = {
   INTERNAL_SERVER_ERROR: 'ошибка по-умолчанию',
   CREATE_USER_ERROR: 'Переданы некорректные данные в методы создания пользователя',
@@ -13,6 +14,7 @@ const ERROR_MESSAGE = {
   ERROR_LOGIN_OR_PASS: 'Неправильные почта или пароль',
   EXIST_EMAIL: 'Данный email уже зарегистрирован',
   IMPOSSIBLE_TO_DEL: 'Невозможно удалить',
+  AUTHORIZATION_ERROR: 'Необходима авторизация',
 };
 
 module.exports = {
@@ -20,4 +22,5 @@ module.exports = {
   BAD_REQUEST,
   SERVER_ERROR,
   ERROR_MESSAGE,
+  AUTHORIZATION_ERROR,
 };
