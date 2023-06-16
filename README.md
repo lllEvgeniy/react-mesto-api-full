@@ -1,6 +1,4 @@
-IP 51.250.27.83
-Frontend https://react-mesto-auth-ebon.vercel.app
-Backend https://vsemMestoMesto.nomoredomains.icu
+
 
 # react-mesto-api-full
 Репозиторий для приложения проекта `Mesto`, включающий фронтенд и бэкенд части приложения со следующими возможностями: авторизации и регистрации пользователей, операции с карточками и пользователями. Бэкенд расположите в директории `backend/`, а фронтенд - в `frontend/`.
